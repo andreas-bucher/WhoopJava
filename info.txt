@@ -1,1 +1,2 @@
+REDIRECT-URL: https://arcticsoft.ch/whoop/callback
 
