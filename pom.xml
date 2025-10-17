@@ -27,7 +27,67 @@
     <maven.compiler.release>17</maven.compiler.release>
   </properties>
   
+  <parent>
+	  <groupId>org.springframework.boot</groupId>
+	  <artifactId>spring-boot-starter-parent</artifactId>
+	  <version>3.5.6</version>
+  </parent>
+  
+  
   <dependencies>
+ 
+    <!-- Reactive web stack -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+
+    <!-- Security + OAuth2 client (login + authorized WebClient) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+
+    <!-- (Optional) Bean validation for request DTOs -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <!-- (Optional) Actuator for health, metrics -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <!-- (Optional) metadata for configuration properties -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Test -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
 
     <dependency>
@@ -36,21 +96,28 @@
       <version>2.15.0</version>
     </dependency>
 
-    
   </dependencies>
   
 
 
   <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+  	<resources>
+    	<resource>
+    		<directory>src/main/resources</directory>
+    	</resource>
+  	</resources>
+    
     <pluginManagement>
         <plugins>
-        
+        <!--
 	        <plugin>
 	            <groupId>org.codehaus.mojo</groupId>
 	            <artifactId>exec-maven-plugin</artifactId>
 	            <version>3.3.0</version>
 	            <configuration>
 	                <mainClass>ch.arcticsoft.whoopjava.OAuth</mainClass>
+	                <classpathScope>runtime</classpathScope>
 	            </configuration>
 	        </plugin>
         
@@ -59,24 +126,20 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
             </plugin>
-			            
-            
+          -->  
+	      <plugin>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-maven-plugin</artifactId>
+	        <configuration>
+	          <image>
+	            <builder>paketobuildpacks/builder-jammy-base</builder>
+	          </image>
+	        </configuration>
+      </plugin>
+      
         </plugins>
     </pluginManagement>
   </build>  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
 </project>
