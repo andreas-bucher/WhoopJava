@@ -28,13 +28,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Controller
-public class HomeController {
+public class WhoopController {
 
-	private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+	private static final Logger log = LoggerFactory.getLogger(WhoopController.class);
     private final InMemoryReactiveClientRegistrationRepository registrations;
 
 	
-	public HomeController(InMemoryReactiveClientRegistrationRepository registrations) {
+	public WhoopController(InMemoryReactiveClientRegistrationRepository registrations) {
 	      this.registrations = registrations;
 	}
 	

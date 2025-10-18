@@ -23,13 +23,13 @@ import reactor.core.publisher.Mono;
 
 
 @RestController
-public class HomeRestController {
+public class WhoopRestController {
 
-	private static final Logger log = LoggerFactory.getLogger(HomeRestController.class);
+	private static final Logger log = LoggerFactory.getLogger(WhoopRestController.class);
 	private final WebClient webClient;
 	
 
-	public HomeRestController(WebClient webClient) {
+	public WhoopRestController(WebClient webClient) {
 		log.info("HomeRestController");
 		this.webClient = webClient;
 	}
@@ -57,6 +57,7 @@ public class HomeRestController {
       return Mono.just(info);
     }   
     
+    /**
     @GetMapping("/oauth/verifyWhoop")
     Mono<Map<String, Object>> verifyWhoop(@RegisteredOAuth2AuthorizedClient("whoop") OAuth2AuthorizedClient client) {
       log.info("verifyWhoop");
@@ -76,7 +77,8 @@ public class HomeRestController {
         access != null && access.getExpiresAt() != null && access.getExpiresAt().isAfter(Instant.now()));
       log.info(client.getClientRegistration().getRegistrationId());
       return Mono.just(info);
-    }       
+    }     
+    **/  
     
 
     @GetMapping("/whoop/recovery")
@@ -88,6 +90,15 @@ public class HomeRestController {
           .bodyToMono(new ParameterizedTypeReference<>() {});
     }
 
+    @GetMapping("/whoop/workout")
+    public Mono<Map<String,Object>> workout() {
+      log.info("recovery");
+      return webClient.get()
+          .uri("/developer/v2/activity/workout")
+          .retrieve()
+          .bodyToMono(new ParameterizedTypeReference<>() {});
+    }
+    
     @GetMapping("/token")
     public String token(@RegisteredOAuth2AuthorizedClient("whoop") OAuth2AuthorizedClient client) {
       log.info("token");
