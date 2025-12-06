@@ -6,10 +6,13 @@ import org.springframework.security.oauth2.client.registration.InMemoryReactiveC
 
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import ch.arcticsoft.whoop.calendar.CalendarEvent;
 import reactor.core.publisher.Mono;
 
 
@@ -37,6 +41,10 @@ public class WhoopRestController {
 	private final WebClient webClient;
     private final InMemoryReactiveClientRegistrationRepository registrations;
     private final WhoopWorkoutService service;
+    
+    
+    private final List<CalendarEvent> events = new CopyOnWriteArrayList<>();
+    private final AtomicLong idGen = new AtomicLong(1);
     
 /**
 	public WhoopRestController(WebClient webClient) {
@@ -169,9 +177,37 @@ public class WhoopRestController {
     
     /**
      * curl -s "https://api.prod.whoop.com/developer/v2/activity/workout/0473abc1-a268-4b14-811f-7940f7ce6198" -H "Authorization: Bearer G0e0ycRyBXfvTkP03VOT4DzOyMyc7Gy07fSGI7QW_3s.ORTViXuKqzn8rEg48hnoHPZBrxvDE_QVeD5xwnsnDUU"
-	*/
+	*/    
     @GetMapping("/api/workout/{id}")
     public Mono<Map<String, Object>> getWorkout(@PathVariable String id) {
       return service.getWorkoutDetail(id);
-    }      
+    }    
+
+    
+    
+    @GetMapping("/api/events")
+    public List<CalendarEvent> getEvents() {
+    	log.info("getEvents ...");
+        events.add(new CalendarEvent(
+                idGen.getAndIncrement(),
+                "Initial demo event",
+                LocalDateTime.now().withHour(10).withMinute(0).withSecond(0).withNano(0),
+                LocalDateTime.now().withHour(11).withMinute(0).withSecond(0).withNano(0)
+        ));
+    	return events;
+    }
+    
+ /**
+    @PostMapping
+    public CalendarEvent createEvent(@RequestBody CalendarEvent event) {
+        event.setId(idGen.getAndIncrement());
+        // if no end is given, create a 1h event
+        if (event.getEnd() == null && event.getStart() != null) {
+            event.setEnd(event.getStart().plusHours(1));
+        }
+        events.add(event);
+        return event;
+    }
+ **/
+    
 }

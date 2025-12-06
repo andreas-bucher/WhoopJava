@@ -1,6 +1,7 @@
 package ch.arcticsoft.whoop;
 
 import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.result.view.Rendering;
@@ -89,6 +91,14 @@ public class WhoopController {
         @RequestParam(required = false, defaultValue = "25") Integer limit
     ) {
       return service.streamAllWorkouts(WhoopWorkoutService.iso(start), WhoopWorkoutService.iso(end), limit);
+    }
+    
+    
+    @GetMapping("/calendar")
+    public String index(Model model) {
+        // Example: pass today’s date to the view (not strictly needed by FullCalendar)
+        model.addAttribute("today", LocalDate.now());
+        return "calendar";
     }
     
 }
