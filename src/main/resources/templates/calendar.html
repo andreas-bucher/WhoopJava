@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Spring Calendar Demo</title>
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 1rem;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+        }
+
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+<h1>Calendar (Spring + FullCalendar)</h1>
+<p>Today: <span th:text="${today}"></span></p>
+
+<div id="calendar"></div>
+
+<!-- FullCalendar JS (global bundle) -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 'auto',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            // Example static events – later you can load these via REST from Spring
+            events: [
+                {
+                    title: 'Demo Event',
+                    start: new Date().toISOString().substring(0, 10)
+                },
+                {
+                    title: 'Another Event',
+                    start: '2025-12-24',
+                    end: '2025-12-26'
+                }
+            ]
+        });
+
+        calendar.render();
+    });
+</script>
+</body>
+</html>
