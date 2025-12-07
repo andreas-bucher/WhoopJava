@@ -36,7 +36,7 @@
 <div id="calendar"></div>
 
 <!-- FullCalendar JS (global bundle) -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
 
 <script>
 	console.log("Creating FullCalendar instance");
@@ -44,6 +44,13 @@
         var calendarEl = document.getElementById('calendar');		
         var calendar = new FullCalendar.Calendar(calendarEl, {
 			    initialView: 'dayGridMonth',
+				firstDay: 1, // Monday
+				locale: 'en-ch',
+				eventTimeFormat: {
+					hour: '2-digit',
+					minute: '2-digit',
+					hour24: 'true'
+				},
 			    height: 'auto',
 			    headerToolbar: {
 			        left: 'prev,next today',
@@ -57,6 +64,7 @@
 				    const from = info.startStr.substring(0, 10); // "YYYY-MM-DD"
 				    const to   = info.endStr.substring(0, 10);
 					console.log("datesSet fired. Range:", from, "→", to);
+					//console.log(calendar.getOption('eventTimeFormat'));
 				    fetch(`/api/calendar/events?from=${from}&to=${to}`)
 				        .then(response => response.json())
 				        .then(events => {
