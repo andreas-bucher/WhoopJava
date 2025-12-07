@@ -23,7 +23,6 @@ public class SecurityConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 	
-	//private final WhoopReactiveOAuth2UserService whoopUserService;
 	private final ServerAuthenticationFailureHandler oauthFailureHandler;
 	private final TokenOnlyOAuth2UserService tokenOnlyUserService;	
 
@@ -34,25 +33,28 @@ public class SecurityConfig {
 	    
 	}
 	
-	  @Bean
-	  OAuth2LoginReactiveAuthenticationManager oauth2AuthManager() {
-	    var accessTokenClient =
-	        new WebClientReactiveAuthorizationCodeTokenResponseClient(); // handles code -> token
-	    return new OAuth2LoginReactiveAuthenticationManager(accessTokenClient, tokenOnlyUserService);
-	  }
+	@Bean
+	OAuth2LoginReactiveAuthenticationManager oauth2AuthManager() {
+	   var accessTokenClient =
+	       new WebClientReactiveAuthorizationCodeTokenResponseClient(); // handles code -> token
+	   return new OAuth2LoginReactiveAuthenticationManager(accessTokenClient, tokenOnlyUserService);
+	}
 	
+
 	@Bean
 	SecurityWebFilterChain security(ServerHttpSecurity http,
 									ServerAuthenticationFailureHandler oauthFailureHandler) {
 	    log.info("security ...");
 		return http
 	      .authorizeExchange(ex -> ex
-	        .pathMatchers("/", "/login**", "/error**").permitAll()
+	        .pathMatchers("/", "/calendar", "/api/calendar/events", "/login**", "/error**").permitAll()
 	        .anyExchange().authenticated())
 	      .oauth2Login( o -> o.authenticationFailureHandler(oauthFailureHandler))
 	      .oauth2Client( Customizer.withDefaults() )
 	      .build();
 	}
+
+	
 /**
 	@Bean
 	ServerAuthenticationFailureHandler failureHandler() {
