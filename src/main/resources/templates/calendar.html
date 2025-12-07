@@ -5,7 +5,7 @@
     <title>Spring Calendar Demo</title>
 
     <!-- FullCalendar CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -39,60 +39,35 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
 <script>
+	console.log("Creating FullCalendar instance");
     document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-
+        var calendarEl = document.getElementById('calendar');		
         var calendar = new FullCalendar.Calendar(calendarEl, {
 			    initialView: 'dayGridMonth',
 			    height: 'auto',
 			    headerToolbar: {
 			        left: 'prev,next today',
 			        center: 'title',
-			        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+			        right: ''
+					//right: 'dayGridMonth,timeGridWeek,timeGridDay'
 			    },
 
-			    // 1) Load events dynamically from your Spring backend
-			    events: '/api/events',
-
-			    // 2) Allow user to create events by clicking on a day
-			    dateClick: function(info) {
-			        var title = prompt('Event title?');
-			        if (!title) {
-			            return;
-			        }
-
-			        // Build payload for the backend
-			        var payload = {
-			            title: title,
-			            // FullCalendar gives ISO date string like "2025-12-06"
-			            // we send it as LocalDateTime without time (= midnight), or add a time if you prefer
-			            start: info.dateStr + 'T09:00:00'  // for example 09:00
-			        };
-
-			        fetch('/api/events', {
-			            method: 'POST',
-			            headers: {
-			                'Content-Type': 'application/json'
-			            },
-			            body: JSON.stringify(payload)
-			        })
-			        .then(response => response.json())
-			        .then(createdEvent => {
-			            // 3) Add returned event to the calendar (no full refetch needed)
-			            calendar.addEvent({
-			                id: createdEvent.id,
-			                title: createdEvent.title,
-			                start: createdEvent.start,
-			                end: createdEvent.end
-			            });
-			        })
-			        .catch(err => {
-			            console.error('Error creating event', err);
-			            alert('Could not create event');
-			        });
-			    }
+				// Load events whenever the visible date range changes
+				datesSet: function (info) {
+				    const from = info.startStr.substring(0, 10); // "YYYY-MM-DD"
+				    const to   = info.endStr.substring(0, 10);
+					console.log("datesSet fired. Range:", from, "→", to);
+				    fetch(`/api/calendar/events?from=${from}&to=${to}`)
+				        .then(response => response.json())
+				        .then(events => {
+							calendar.removeAllEvents();
+							calendar.addEventSource(events);
+				        })
+				        .catch(err => console.error('Error loading events', err));
+				},
+				
 			});
-
+		console.log("Render FullCalendar instance");
         calendar.render();
     });
 </script>
